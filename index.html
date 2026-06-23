@@ -55,6 +55,13 @@
     align-items:center;
   }
 
+  .search-wrap{
+    flex:1 1 320px;
+    display:flex;
+    gap:10px;
+    min-width:260px;
+  }
+
   .controls input,
   .controls select{
     height:46px;
@@ -68,24 +75,33 @@
   }
 
   .controls input{
-    flex:1 1 260px;
-    min-width:240px;
+    flex:1;
+    min-width:0;
   }
 
   .controls select{
     flex:0 0 220px;
   }
 
-  .meta,
-  .status-line{
+  .search-btn{
+    height:46px;
+    border:none;
+    border-radius:10px;
+    background:#111;
+    color:#fff;
+    font-size:15px;
+    font-weight:700;
+    padding:0 16px;
+    cursor:pointer;
+    flex:0 0 auto;
+  }
+
+  .meta{
     max-width:1500px;
     margin:10px auto 0;
     padding:0 20px;
     color:var(--muted);
     font-size:14px;
-  }
-
-  .status-line{
     min-height:20px;
   }
 
@@ -118,32 +134,6 @@
     display:block;
     background:#f5f5f5;
     cursor:pointer;
-  }
-
-  .thumbs{
-    display:flex;
-    gap:8px;
-    padding:10px 12px 0;
-    flex-wrap:wrap;
-  }
-
-  .thumb{
-    width:56px;
-    height:56px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    overflow:hidden;
-    padding:0;
-    background:#fff;
-    cursor:pointer;
-    flex:0 0 auto;
-  }
-
-  .thumb img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
   }
 
   .info{
@@ -202,10 +192,12 @@
   .buttons{
     display:flex;
     gap:10px;
+    flex-wrap:wrap;
   }
 
   .btn{
     flex:1;
+    min-width:0;
     text-decoration:none;
     text-align:center;
     padding:12px 10px;
@@ -224,6 +216,12 @@
   .btn.secondary{
     background:var(--dark);
     color:#fff;
+  }
+
+  .btn.light{
+    background:#f4f4f4;
+    color:#111;
+    border:1px solid #ddd;
   }
 
   .empty,
@@ -246,7 +244,6 @@
     background:#fff6f6;
   }
 
-  /* GALLERY MODAL */
   .modal{
     display:none;
     position:fixed;
@@ -258,8 +255,7 @@
     padding:20px;
   }
 
-  .gallery-close,
-  .modal-close{
+  .gallery-close{
     position:fixed;
     top:16px;
     right:22px;
@@ -293,6 +289,18 @@
     object-fit:contain;
     background:#111;
     border-radius:14px;
+    overflow:hidden;
+  }
+
+  .gallery-main iframe,
+  .gallery-main img{
+    width:100%;
+    height:72vh;
+    max-height:72vh;
+    object-fit:contain;
+    display:block;
+    border:0;
+    background:#111;
   }
 
   .arrow-btn{
@@ -364,7 +372,6 @@
     display:block;
   }
 
-  /* DETAILS VDP OVERLAY */
   .modal-panel{
     width:min(1100px, 100%);
     max-height:92vh;
@@ -387,13 +394,17 @@
     width:100%;
     aspect-ratio:16 / 9;
     background:#000;
+    position:relative;
   }
 
-  .video img{
+  .video img,
+  .video iframe{
     width:100%;
     height:100%;
     object-fit:cover;
     display:block;
+    border:0;
+    background:#111;
   }
 
   .content{
@@ -478,6 +489,64 @@
     display:block;
   }
 
+  .detail-dots{
+    display:flex;
+    justify-content:center;
+    gap:7px;
+    margin-top:10px;
+    flex-wrap:wrap;
+    padding-bottom:6px;
+  }
+
+  .detail-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:rgba(255,255,255,.35);
+    cursor:pointer;
+    border:0;
+    padding:0;
+  }
+
+  .detail-dot.active{
+    background:#fff;
+  }
+
+  .share-menu{
+    width:min(520px, 100%);
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+    padding:18px;
+  }
+
+  .share-menu h2{
+    margin:0 0 10px;
+    font-size:22px;
+  }
+
+  .share-menu p{
+    margin:0 0 16px;
+    color:#555;
+    line-height:1.5;
+    font-size:14px;
+  }
+
+  .share-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .share-actions .btn{
+    width:100%;
+    min-width:0;
+  }
+
+  .share-actions .span-2{
+    grid-column:1 / -1;
+  }
+
   @media (max-width: 860px){
     .grid{
       grid-template-columns:1fr;
@@ -487,6 +556,14 @@
       width:44px;
       height:44px;
       font-size:24px;
+    }
+
+    .share-actions{
+      grid-template-columns:1fr;
+    }
+
+    .share-actions .span-2{
+      grid-column:auto;
     }
   }
 
@@ -498,6 +575,7 @@
     .content .price{ font-size:16px; }
     .arrow-btn.left{ left:8px; }
     .arrow-btn.right{ right:8px; }
+    .search-wrap{ flex-direction:column; }
   }
 </style>
 </head>
@@ -508,7 +586,10 @@
 </header>
 
 <div class="controls">
-  <input id="search" type="text" placeholder="Search inventory..." />
+  <div class="search-wrap">
+    <input id="search" type="text" placeholder="Search inventory by stock, year, make, model..." autocomplete="off" spellcheck="false" />
+    <button class="search-btn" id="searchBtn" type="button">Search</button>
+  </div>
 
   <select id="typeFilter">
     <option value="">All Types</option>
@@ -529,24 +610,22 @@
   </select>
 </div>
 
-<div class="meta" id="meta">Loading inventory...</div>
-<div class="status-line" id="statusLine"></div>
+<div class="meta" id="meta"></div>
 <div class="inventory" id="inventory"></div>
 
-<!-- GALLERY MODAL -->
 <div class="modal" id="galleryModal" aria-hidden="true">
   <div class="gallery-close" onclick="closeModal('galleryModal')">✕</div>
 
   <div class="gallery-wrap">
     <div class="gallery-stage">
-      <button class="arrow-btn left" type="button" onclick="prevGalleryImage()">‹</button>
-      <img id="galleryMainImg" class="gallery-main" src="" alt="Vehicle image" />
-      <button class="arrow-btn right" type="button" onclick="nextGalleryImage()">›</button>
+      <button class="arrow-btn left" type="button" onclick="prevGalleryItem()">‹</button>
+      <div id="galleryMediaWrap" class="gallery-main"></div>
+      <button class="arrow-btn right" type="button" onclick="nextGalleryItem()">›</button>
     </div>
 
     <div class="gallery-controls">
-      <button class="gallery-btn" type="button" onclick="prevGalleryImage()">Prev</button>
-      <button class="gallery-btn" type="button" onclick="nextGalleryImage()">Next</button>
+      <button class="gallery-btn" type="button" onclick="prevGalleryItem()">Prev</button>
+      <button class="gallery-btn" type="button" onclick="nextGalleryItem()">Next</button>
       <button class="gallery-btn" type="button" onclick="closeModal('galleryModal')">Close</button>
     </div>
 
@@ -554,15 +633,33 @@
   </div>
 </div>
 
-<!-- DETAILS MODAL -->
 <div class="modal" id="detailsModal" aria-hidden="true">
   <div class="gallery-close" onclick="closeModal('detailsModal')">✕</div>
   <div class="modal-panel" id="detailsBody"></div>
 </div>
 
+<div class="modal" id="shareModal" aria-hidden="true">
+  <div class="gallery-close" onclick="closeModal('shareModal')">✕</div>
+  <div class="share-menu">
+    <h2>Share Listing</h2>
+    <p id="shareText">Choose how you want to share this vehicle.</p>
+    <div class="share-actions">
+      <button class="btn primary span-2" type="button" id="nativeShareBtn">Share on phone / apps</button>
+      <button class="btn secondary" type="button" id="copyShareBtn">Copy Link</button>
+      <button class="btn light" type="button" id="facebookShareBtn">Facebook</button>
+      <button class="btn light" type="button" id="xShareBtn">X</button>
+      <button class="btn light" type="button" id="smsShareBtn">Text Message</button>
+      <button class="btn light" type="button" id="whatsShareBtn">WhatsApp</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const SHEET_ID = "1LGeq8OOEyDZUbEAKPsyOeMKIpBt2gRQGpFL22UZ3szI";
   const GID = 0;
+
+  // This is the URL people should share/use
+  const PUBLIC_SITE_URL = "https://www.cashbydaily.com/inventory";
   const SCHEDULE_URL = "https://www.cashbydaily.com/inquiry";
 
   const SHEET_URL =
@@ -582,20 +679,37 @@
 
   let vehicles = [];
   let visibleVehicles = [];
-  let currentGalleryImages = [];
+  let currentGalleryMedia = [];
   let currentGalleryIndex = 0;
+  let currentDetailMediaIndex = 0;
 
   const inventoryEl = document.getElementById("inventory");
   const metaEl = document.getElementById("meta");
-  const statusEl = document.getElementById("statusLine");
   const searchEl = document.getElementById("search");
   const sortEl = document.getElementById("sort");
   const typeFilterEl = document.getElementById("typeFilter");
+  const searchBtn = document.getElementById("searchBtn");
   const galleryModal = document.getElementById("galleryModal");
   const detailsModal = document.getElementById("detailsModal");
-  const galleryMainImg = document.getElementById("galleryMainImg");
+  const shareModal = document.getElementById("shareModal");
+  const galleryMediaWrap = document.getElementById("galleryMediaWrap");
   const galleryThumbs = document.getElementById("galleryThumbs");
   const detailsBody = document.getElementById("detailsBody");
+  const shareText = document.getElementById("shareText");
+
+  const nativeShareBtn = document.getElementById("nativeShareBtn");
+  const copyShareBtn = document.getElementById("copyShareBtn");
+  const facebookShareBtn = document.getElementById("facebookShareBtn");
+  const xShareBtn = document.getElementById("xShareBtn");
+  const smsShareBtn = document.getElementById("smsShareBtn");
+  const whatsShareBtn = document.getElementById("whatsShareBtn");
+
+  function sanitizeSearchText(value) {
+    return String(value ?? "")
+      .replace(/[<>`{}[\]\\|;]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -617,11 +731,21 @@
     return Number.isFinite(n) ? n : 0;
   }
 
-  function parseImages(description) {
+  function parseMedia(description) {
     return String(description ?? "")
       .split(";")
       .map(s => s.trim())
-      .filter(Boolean);
+      .filter(Boolean)
+      .map(item => {
+        const lower = item.toLowerCase();
+        if (lower.startsWith("youtube:")) {
+          return { type: "youtube", url: item.slice(8).trim() };
+        }
+        if (lower.startsWith("facebook:")) {
+          return { type: "facebook", url: item.slice(9).trim() };
+        }
+        return { type: "image", url: item };
+      });
   }
 
   function normalizeText(v) {
@@ -674,26 +798,78 @@
     }
   }
 
+  function getYouTubeEmbedUrl(url) {
+    if (!url) return "";
+    try {
+      const u = new URL(url);
+      let videoId = "";
+
+      if (u.hostname.includes("youtu.be")) {
+        videoId = u.pathname.replace("/", "");
+      } else if (u.searchParams.get("v")) {
+        videoId = u.searchParams.get("v");
+      } else if (u.pathname.includes("/embed/")) {
+        videoId = u.pathname.split("/embed/")[1].split("/")[0];
+      }
+
+      if (!videoId) return url;
+
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${encodeURIComponent(videoId)}&playsinline=1&rel=0&modestbranding=1`;
+    } catch {
+      return url;
+    }
+  }
+
+  function getFacebookVideoEmbedUrl(url) {
+    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&autoplay=true&mute=1`;
+  }
+
+  function renderMediaItem(item) {
+    if (!item) return `<img src="${PLACEHOLDER_IMAGE}" alt="No media" />`;
+
+    if (item.type === "youtube") {
+      return `
+        <iframe
+          src="${getYouTubeEmbedUrl(item.url)}"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      `;
+    }
+
+    if (item.type === "facebook") {
+      return `
+        <iframe
+          src="${getFacebookVideoEmbedUrl(item.url)}"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      `;
+    }
+
+    return `<img src="${escapeHtml(item.url)}" alt="Vehicle media" onerror="this.src='${PLACEHOLDER_IMAGE}'" />`;
+  }
+
   function setCardImage(cardId, imageUrl) {
     const img = document.getElementById(`main-img-${cardId}`);
     if (img && imageUrl) img.src = imageUrl;
   }
 
-  function setGalleryImage(index) {
-    if (!currentGalleryImages.length) return;
-    currentGalleryIndex = ((index % currentGalleryImages.length) + currentGalleryImages.length) % currentGalleryImages.length;
-    galleryMainImg.src = currentGalleryImages[currentGalleryIndex];
+  function setGalleryIndex(index) {
+    if (!currentGalleryMedia.length) return;
+    currentGalleryIndex = ((index % currentGalleryMedia.length) + currentGalleryMedia.length) % currentGalleryMedia.length;
+    galleryMediaWrap.innerHTML = renderMediaItem(currentGalleryMedia[currentGalleryIndex]);
 
-    const thumbs = [...galleryThumbs.querySelectorAll(".gallery-thumb")];
-    thumbs.forEach((btn, i) => btn.classList.toggle("active", i === currentGalleryIndex));
+    const dots = [...galleryThumbs.querySelectorAll(".gallery-thumb")];
+    dots.forEach((btn, i) => btn.classList.toggle("active", i === currentGalleryIndex));
   }
 
-  function nextGalleryImage() {
-    setGalleryImage(currentGalleryIndex + 1);
+  function nextGalleryItem() {
+    setGalleryIndex(currentGalleryIndex + 1);
   }
 
-  function prevGalleryImage() {
-    setGalleryImage(currentGalleryIndex - 1);
+  function prevGalleryItem() {
+    setGalleryIndex(currentGalleryIndex - 1);
   }
 
   function closeModal(id) {
@@ -708,46 +884,93 @@
     const v = visibleVehicles[index];
     if (!v) return;
 
-    const images = v.images.length ? v.images : [PLACEHOLDER_IMAGE];
-    currentGalleryImages = images;
-    currentGalleryIndex = Math.max(0, Math.min(startIndex, images.length - 1));
+    const media = v.media.length ? v.media : [{ type: "image", url: PLACEHOLDER_IMAGE }];
+    currentGalleryMedia = media;
+    currentGalleryIndex = Math.max(0, Math.min(startIndex, media.length - 1));
 
-    galleryThumbs.innerHTML = images.map((img, i) => `
-      <button class="gallery-thumb ${i === currentGalleryIndex ? "active" : ""}" type="button" onclick="setGalleryImage(${i})">
-        <img src="${escapeHtml(img)}" alt="Thumb ${i + 1}">
-      </button>
-    `).join("");
+    galleryThumbs.innerHTML = media.map((m, i) => {
+      const thumbSrc = m.type === "image" ? m.url : PLACEHOLDER_IMAGE;
+      return `
+        <button class="gallery-thumb ${i === currentGalleryIndex ? "active" : ""}" type="button" onclick="setGalleryIndex(${i})">
+          <img src="${escapeHtml(thumbSrc)}" alt="Thumb ${i + 1}">
+        </button>
+      `;
+    }).join("");
 
-    setGalleryImage(currentGalleryIndex);
+    setGalleryIndex(currentGalleryIndex);
     galleryModal.style.display = "flex";
     galleryModal.setAttribute("aria-hidden", "false");
+  }
+
+  function setDetailMedia(index, mediaIndex) {
+    const v = visibleVehicles[index];
+    if (!v || !v.media.length) return;
+
+    currentDetailMediaIndex = mediaIndex;
+
+    const media = v.media;
+    const detailMediaWrap = document.getElementById("detailMediaWrap");
+    detailMediaWrap.innerHTML = renderMediaItem(media[mediaIndex]);
+
+    const dots = [...document.querySelectorAll("#detailDots .detail-dot")];
+    dots.forEach((dot, i) => dot.classList.toggle("active", i === mediaIndex));
+
+    restartDetailMedia();
+  }
+
+  function restartDetailMedia() {
+    const iframe = document.querySelector("#detailMediaWrap iframe");
+    if (iframe) {
+      const src = iframe.src;
+      iframe.src = "";
+      setTimeout(() => { iframe.src = src; }, 20);
+    }
   }
 
   function openDetails(index) {
     const v = visibleVehicles[index];
     if (!v) return;
 
-    const images = v.images.length ? v.images : [PLACEHOLDER_IMAGE];
+    currentDetailMediaIndex = 0;
+
+    const media = v.media.length ? v.media : [{ type: "image", url: PLACEHOLDER_IMAGE }];
     const title = `${v.year} ${v.make} ${v.model}`.trim();
     const price = Number(toNumber(v.price)).toLocaleString();
     const sold = isSold(v.status);
     const inStock = isInStock(v.status);
     const statusLabel = sold ? "SOLD" : (inStock ? "IN STOCK" : "IN STOCK");
     const statusClass = sold ? "sold" : "in-stock";
+    const stockParam = encodeURIComponent(v.stock || "");
+    const shareUrl = `${PUBLIC_SITE_URL}?stock=${stockParam}`;
 
     detailsBody.innerHTML = `
       <div class="wrap">
         <div class="video">
-          <img
-            src="${escapeHtml(images[0])}"
-            style="cursor:pointer"
-            alt="${escapeHtml(title)}"
-            onerror="this.src='${PLACEHOLDER_IMAGE}'"
-            onclick="openGallery(${index}, 0)"
-          />
+          <div style="position:relative;width:100%;height:100%;">
+            <div id="detailMediaWrap" style="width:100%;height:100%;">
+              ${renderMediaItem(media[0])}
+            </div>
+
+            <div id="detailDots" class="detail-dots">
+              ${media.map((_, i) => `
+                <button
+                  class="detail-dot ${i === 0 ? "active" : ""}"
+                  type="button"
+                  onclick="setDetailMedia(${index}, ${i})"
+                  aria-label="Show media ${i + 1}">
+                </button>
+              `).join("")}
+            </div>
+          </div>
         </div>
 
         <div class="content">
+          <div class="chips" style="margin-bottom:12px;">
+            <span class="chip status-chip ${statusClass}">${statusLabel}</span>
+            ${v.type ? `<span class="chip">${escapeHtml(v.type)}</span>` : ""}
+            ${v.stock ? `<span class="chip">Stock ${escapeHtml(v.stock)}</span>` : ""}
+          </div>
+
           <div class="title">${escapeHtml(title)}</div>
           <div class="subtitle">${escapeHtml(v.type)} • Stock: ${escapeHtml(v.stock)}</div>
           <div class="price">$${price}</div>
@@ -760,26 +983,105 @@
             <div><span class="label">Price</span><br>$${price}</div>
             <div><span class="label">Stock</span><br>${escapeHtml(v.stock)}</div>
             <div><span class="label">Status</span><br>${escapeHtml(statusLabel)}</div>
-            <div><span class="label">Photo Count</span><br>${images.length}</div>
+            <div><span class="label">Media Items</span><br>${media.length}</div>
           </div>
 
           <div class="details-thumb-row">
-            ${images.map((img, i) => `
-              <button class="details-thumb" type="button" onclick="openGallery(${index}, ${i})">
-                <img src="${escapeHtml(img)}" alt="Photo ${i + 1}">
-              </button>
-            `).join("")}
+            ${media.map((m, i) => {
+              const thumbSrc = m.type === "image" ? m.url : PLACEHOLDER_IMAGE;
+              return `
+                <button class="details-thumb" type="button" onclick="setDetailMedia(${index}, ${i})">
+                  <img src="${escapeHtml(thumbSrc)}" alt="Media ${i + 1}">
+                </button>
+              `;
+            }).join("")}
+          </div>
+
+          <div class="buttons" style="margin-top:16px;">
+            <button class="btn secondary" type="button" onclick="copyListingLink('${escapeJs(shareUrl)}')">Copy Listing Link</button>
+            <button class="btn primary" type="button" onclick="openGallery(${index}, ${currentDetailMediaIndex || 0})">View Gallery</button>
           </div>
         </div>
-      </div>
 
-      <div class="cta">
-        <a class="btn" href="${SCHEDULE_URL}" target="_blank" rel="noopener">Schedule Appointment</a>
+        <div class="cta">
+          <a class="btn" href="${SCHEDULE_URL}" target="_blank" rel="noopener">Schedule Appointment</a>
+        </div>
       </div>
     `;
 
     detailsModal.style.display = "flex";
     detailsModal.setAttribute("aria-hidden", "false");
+  }
+
+  function getVehicleShareUrl(v){
+    const stock = encodeURIComponent(v.stock || "");
+    return `${PUBLIC_SITE_URL}?stock=${stock}`;
+  }
+
+  function copyListingLink(url) {
+    navigator.clipboard.writeText(url).then(() => {
+      statusEl.textContent = `Link copied.`;
+      setTimeout(() => {
+        if (statusEl.textContent === "Link copied.") statusEl.textContent = "";
+      }, 2000);
+    });
+  }
+
+  function openShareMenu(index) {
+    const v = visibleVehicles[index];
+    if (!v) return;
+
+    const title = `${v.year} ${v.make} ${v.model}`;
+    const url = getVehicleShareUrl(v);
+
+    shareText.textContent = `${title} • Stock ${v.stock}`;
+    shareModal.style.display = "flex";
+    shareModal.setAttribute("aria-hidden", "false");
+
+    nativeShareBtn.onclick = async () => {
+      const shareData = {
+        title,
+        text: `Check out this vehicle: ${title} (Stock: ${v.stock})`,
+        url
+      };
+
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          closeModal("shareModal");
+          return;
+        } catch (e) {}
+      }
+
+      copyListingLink(url);
+      closeModal("shareModal");
+    };
+
+    copyShareBtn.onclick = async () => {
+      await navigator.clipboard.writeText(url);
+      closeModal("shareModal");
+      statusEl.textContent = "Link copied.";
+      setTimeout(() => { if (statusEl.textContent === "Link copied.") statusEl.textContent = ""; }, 2000);
+    };
+
+    facebookShareBtn.onclick = () => {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, "_blank", "noopener");
+    };
+
+    xShareBtn.onclick = () => {
+      const text = encodeURIComponent(`${title} • Stock ${v.stock}`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, "_blank", "noopener");
+    };
+
+    smsShareBtn.onclick = () => {
+      const body = encodeURIComponent(`${title} • Stock ${v.stock} ${url}`);
+      const smsUrl = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? `sms:?body=${body}` : `sms:?&body=${body}`;
+      window.location.href = smsUrl;
+    };
+
+    whatsShareBtn.onclick = () => {
+      window.open(`https://wa.me/?text=${encodeURIComponent(`${title} • Stock ${v.stock} ${url}`)}`, "_blank", "noopener");
+    };
   }
 
   async function validateImageUrl(url, timeoutMs = 8000) {
@@ -812,7 +1114,7 @@
   }
 
   function render() {
-    const query = searchEl.value.trim().toLowerCase();
+    const query = sanitizeSearchText(searchEl.value).toLowerCase();
     const sortMode = sortEl.value;
     const typeFilter = typeFilterEl.value.trim().toLowerCase();
 
@@ -842,33 +1144,32 @@
     }
 
     inventoryEl.innerHTML = list.map((v, index) => {
-      const images = v.images.length ? v.images : [PLACEHOLDER_IMAGE];
+      const images = v.media.filter(m => m.type === "image");
+      const firstImage = images.length ? images[0].url : PLACEHOLDER_IMAGE;
       const cardId = `${index}-${String(v.stock).replace(/[^a-z0-9_-]/gi, "") || "car"}`;
-      const mainImage = escapeHtml(images[0]);
       const title = `${escapeHtml(v.year)} ${escapeHtml(v.make)} ${escapeHtml(v.model)}`.trim();
       const priceLine = Number(toNumber(v.price)).toLocaleString();
       const sold = isSold(v.status);
       const inStock = isInStock(v.status);
       const statusClass = sold ? "sold" : "in-stock";
       const statusLabel = sold ? "SOLD" : (inStock ? "IN STOCK" : "IN STOCK");
+      const slideCount = v.media.length;
 
       return `
         <article class="card">
           <img
             id="main-img-${cardId}"
             class="main-image"
-            src="${mainImage}"
+            src="${escapeHtml(firstImage)}"
             alt="${title}"
             onerror="this.src='${PLACEHOLDER_IMAGE}'"
-            onclick="openGallery(${index}, 0)"
+            onclick="openDetails(${index})"
           >
 
-          ${images.length > 1 ? `
-            <div class="thumbs">
-              ${images.slice(0, 6).map((img, i) => `
-                <button class="thumb" type="button" onclick="setCardImage('${cardId}', '${escapeJs(img)}')">
-                  <img src="${escapeHtml(img)}" alt="Photo ${i + 1}">
-                </button>
+          ${slideCount > 1 ? `
+            <div style="display:flex;justify-content:center;gap:6px;padding:8px 10px 0;flex-wrap:wrap;">
+              ${v.media.map((_, i) => `
+                <span style="width:8px;height:8px;border-radius:50%;background:${i===0 ? '#111' : '#ccc'};display:inline-block;"></span>
               `).join("")}
             </div>
           ` : ""}
@@ -877,9 +1178,10 @@
             <div class="chips">
               <span class="chip status-chip ${statusClass}">${statusLabel}</span>
               ${v.type ? `<span class="chip">${escapeHtml(v.type)}</span>` : ""}
+              ${slideCount > 1 ? `<span class="chip">${slideCount} Photos / Videos</span>` : ""}
             </div>
 
-            <div class="title">${title}</div>
+            <div class="title" style="cursor:pointer" onclick="openDetails(${index})">${title}</div>
             <div class="price">$${priceLine}</div>
 
             <div class="details">
@@ -890,6 +1192,7 @@
             <div class="buttons">
               <a class="btn primary" href="${SCHEDULE_URL}" target="_blank" rel="noopener">Schedule</a>
               <button class="btn secondary" type="button" onclick="openDetails(${index})">Details</button>
+              <button class="btn light" type="button" onclick="openShareMenu(${index})">Share</button>
             </div>
           </div>
         </article>
@@ -898,8 +1201,6 @@
   }
 
   function loadSheetViaScript() {
-    statusEl.textContent = "Loading sheet...";
-
     const existing = document.getElementById("sheet-loader");
     if (existing) existing.remove();
 
@@ -909,8 +1210,7 @@
     script.src = `${SHEET_URL}&_=${Date.now()}`;
 
     script.onerror = () => {
-      metaEl.textContent = "Could not load the sheet.";
-      statusEl.textContent = "";
+      metaEl.textContent = "Unable to load inventory.";
       inventoryEl.innerHTML = `
         <div class="error">
           The inventory did not load. Make sure the sheet is shared as <strong>Anyone with the link</strong> or <strong>Public on the web</strong>, and that row 1 contains:
@@ -921,6 +1221,21 @@
     };
 
     document.body.appendChild(script);
+  }
+
+  function getRequestedStock() {
+    const direct = new URLSearchParams(window.location.search).get("stock");
+    if (direct) return direct.trim().toLowerCase();
+
+    try {
+      if (document.referrer) {
+        const refUrl = new URL(document.referrer);
+        const fromRef = refUrl.searchParams.get("stock") || refUrl.searchParams.get("s");
+        if (fromRef) return fromRef.trim().toLowerCase();
+      }
+    } catch (e) {}
+
+    return "";
   }
 
   window.inventorySheetLoaded = async function(data) {
@@ -935,31 +1250,60 @@
         price: normalizeText(row.c?.[4]?.v || ""),
         stock: normalizeText(row.c?.[5]?.v || ""),
         status: normalizeText(row.c?.[6]?.v || ""),
-        images: parseImages(row.c?.[7]?.v || "")
+        media: parseMedia(row.c?.[7]?.v || "")
       }));
-
-      const total = vehicles.length;
-      const detected = vehicles.filter(v => isInStock(v.status)).length;
-      statusEl.textContent = `Loaded ${total} rows. In-stock rows detected: ${detected}. Validating images...`;
 
       vehicles = vehicles.filter(v => isInStock(v.status));
 
       for (let i = 0; i < vehicles.length; i++) {
-        const cleaned = await validateImages(vehicles[i].images);
-        vehicles[i].images = cleaned.length ? cleaned : [];
+        const images = vehicles[i].media.filter(m => m.type === "image").map(m => m.url);
+        const cleaned = await validateImages(images);
+        const otherMedia = vehicles[i].media.filter(m => m.type !== "image");
+        const cleanedImages = cleaned.map(url => ({ type: "image", url }));
+        vehicles[i].media = [...cleanedImages, ...otherMedia];
       }
 
-      statusEl.textContent = `Loaded ${total} rows. Valid in-stock vehicles: ${vehicles.length}.`;
       render();
+
+      const stockParam = getRequestedStock();
+      if (stockParam) {
+        const matchIndex = visibleVehicles.findIndex(v =>
+          String(v.stock || "").trim().toLowerCase() === stockParam
+        );
+
+        if (matchIndex >= 0) {
+          openDetails(matchIndex);
+        } else {
+          searchEl.value = stockParam;
+          render();
+        }
+      }
     } catch (err) {
       console.error(err);
-      metaEl.textContent = "Inventory load error.";
-      statusEl.textContent = "";
+      metaEl.textContent = "Unable to load inventory.";
       inventoryEl.innerHTML = `<div class="error">The sheet loaded, but the data format did not match the expected columns.</div>`;
     }
   };
 
-  searchEl.addEventListener("input", render);
+  function runSearch() {
+    const cleaned = sanitizeSearchText(searchEl.value);
+    searchEl.value = cleaned;
+    render();
+  }
+
+  searchBtn.addEventListener("click", runSearch);
+
+  searchEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      runSearch();
+    }
+  });
+
+  searchEl.addEventListener("input", () => {
+    searchEl.value = sanitizeSearchText(searchEl.value);
+  });
+
   sortEl.addEventListener("change", render);
   typeFilterEl.addEventListener("change", render);
 
@@ -971,22 +1315,30 @@
     if (e.target === detailsModal) closeModal("detailsModal");
   });
 
+  shareModal.addEventListener("click", e => {
+    if (e.target === shareModal) closeModal("shareModal");
+  });
+
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") {
       closeModal("galleryModal");
       closeModal("detailsModal");
+      closeModal("shareModal");
     }
-    if (e.key === "ArrowRight" && galleryModal.style.display === "flex") nextGalleryImage();
-    if (e.key === "ArrowLeft" && galleryModal.style.display === "flex") prevGalleryImage();
+    if (e.key === "ArrowRight" && galleryModal.style.display === "flex") nextGalleryItem();
+    if (e.key === "ArrowLeft" && galleryModal.style.display === "flex") prevGalleryItem();
   });
 
   window.openGallery = openGallery;
   window.openDetails = openDetails;
   window.closeModal = closeModal;
-  window.nextGalleryImage = nextGalleryImage;
-  window.prevGalleryImage = prevGalleryImage;
-  window.setGalleryImage = setGalleryImage;
+  window.nextGalleryItem = nextGalleryItem;
+  window.prevGalleryItem = prevGalleryItem;
+  window.setGalleryIndex = setGalleryIndex;
+  window.setDetailMedia = setDetailMedia;
   window.setCardImage = setCardImage;
+  window.copyListingLink = copyListingLink;
+  window.openShareMenu = openShareMenu;
 
   loadSheetViaScript();
 </script>
