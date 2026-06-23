@@ -22,6 +22,7 @@ header{
 h1{
     margin:0;
     font-size:42px;
+    letter-spacing:1px;
 }
 
 .controls{
@@ -125,9 +126,10 @@ input{
 <input id="search" placeholder="Search inventory...">
 
 <select id="sort">
-<option value="">Sort</option>
+<option value="">Sort By</option>
 <option value="priceLow">Price Low → High</option>
 <option value="priceHigh">Price High → Low</option>
+<option value="newest">Newest Stock</option>
 </select>
 </div>
 
@@ -141,7 +143,7 @@ const SHEET_URL =
 let vehicles = [];
 
 /*
-COLUMN ORDER:
+COLUMN MAP:
 0 Year
 1 Make
 2 Model
@@ -177,9 +179,9 @@ desc: r.c?.[7]?.v || ""
 render();
 
 }catch(err){
-console.log("Sheet load error:",err);
+console.log(err);
 document.getElementById("inventory").innerHTML =
-"<p style='padding:20px'>Failed to load inventory. Check sheet sharing settings.</p>";
+"<p style='padding:20px'>Unable to load inventory. Check Google Sheet sharing settings.</p>";
 }
 
 }
@@ -206,6 +208,10 @@ break;
 
 case "priceHigh":
 list.sort((a,b)=>b.price-a.price);
+break;
+
+case "newest":
+list.sort((a,b)=>(+b.stock||0)-(+a.stock||0));
 break;
 
 }
