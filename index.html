@@ -16,31 +16,33 @@
   }
 
   header {
-    padding: 26px;
+    padding: 22px;
     text-align: center;
     border-bottom: 1px solid #eee;
   }
 
-  header h1 { margin: 0; font-size: 40px; }
+  header h1 {
+    margin: 0;
+    font-size: 38px;
+  }
 
   .controls {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    padding: 20px;
+    padding: 18px;
     max-width: 1200px;
     margin: auto;
   }
 
-  .controls input, .controls select {
+  .controls input {
+    flex: 1;
+    min-width: 220px;
     height: 44px;
     padding: 0 12px;
     border: 1px solid #ddd;
     border-radius: 10px;
-    font-size: 14px;
   }
-
-  .controls input { flex: 1; min-width: 220px; }
 
   .search-btn {
     height: 44px;
@@ -56,8 +58,8 @@
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    padding: 20px;
+    gap: 14px;
+    padding: 18px;
     max-width: 1400px;
     margin: auto;
   }
@@ -66,109 +68,87 @@
     border: 1px solid #eee;
     border-radius: 14px;
     overflow: hidden;
-    background: #fff;
     cursor: pointer;
+    background: #fff;
   }
 
-  .card:hover { box-shadow: 0 10px 25px rgba(0,0,0,.08); }
+  .card:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  }
 
   .img {
     width: 100%;
     height: 220px;
     object-fit: cover;
-    display: block;
     background: #f3f3f3;
   }
 
-  .content { padding: 12px; }
-
-  .title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-  .price { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-  .meta { font-size: 13px; color: #666; }
-
-  .chips {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-top: 10px;
+  .content {
+    padding: 12px;
   }
 
-  .chip {
-    font-size: 11px;
-    padding: 5px 8px;
-    border-radius: 999px;
-    border: 1px solid #ddd;
+  .title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
   }
 
-  /* MODAL */
+  .price {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .meta {
+    font-size: 13px;
+    color: #666;
+  }
+
+  /* FULL SCREEN DETAILS */
   .modal {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.85);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-
-  .panel {
     background: #fff;
-    width: min(1000px, 100%);
-    border-radius: 16px;
-    overflow: hidden;
-    max-height: 92vh;
+    z-index: 9999;
+    overflow-y: auto;
   }
 
-  /* MEDIA AREA */
   .media {
     position: relative;
     background: #000;
     width: 100%;
-    height: 420px;
-    overflow: hidden;
+    height: 45vh;
+    min-height: 320px;
   }
 
   .media img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    display: block;
-    background: #000;
   }
 
-  /* ✅ ARROWS FIXED */
   .arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 50px;
-    height: 50px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
     font-size: 26px;
-    font-weight: bold;
-    background: rgba(255,255,255,0.95);
-    color: #111;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: rgba(255,255,255,.95);
+    z-index: 5;
   }
 
-  .arrow.left { left: 10px; }
-  .arrow.right { right: 10px; }
-
-  .arrow:hover {
-    background: #fff;
-  }
+  .arrow.left { left: 12px; }
+  .arrow.right { right: 12px; }
 
   .dots {
     position: absolute;
     bottom: 10px;
-    left: 0;
-    right: 0;
+    width: 100%;
     display: flex;
     justify-content: center;
     gap: 6px;
@@ -184,33 +164,53 @@
 
   .dot.active { background: #fff; }
 
-  .info { padding: 14px; }
+  .info {
+    padding: 16px;
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  .titleBig {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .priceBig {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
 
   .grid2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .btns {
     display: flex;
     gap: 10px;
-    margin-top: 14px;
+    margin-top: 18px;
   }
 
   .btn {
     flex: 1;
-    padding: 12px;
+    padding: 14px;
     border-radius: 10px;
     border: none;
-    cursor: pointer;
     font-weight: 700;
+    cursor: pointer;
   }
 
   .primary { background: #1877f2; color: #fff; }
   .dark { background: #111; color: #fff; }
-  .light { background: #eee; }
+
+  @media(max-width:700px){
+    .grid2 { grid-template-columns: 1fr; }
+    header h1 { font-size: 30px; }
+  }
 </style>
 </head>
 
@@ -222,44 +222,39 @@
 
 <div class="controls">
   <input id="search" placeholder="Search inventory..." />
-  <button class="search-btn" onclick="runSearch()">Search</button>
+  <button class="search-btn" onclick="render()">Search</button>
 </div>
 
 <div class="grid" id="grid"></div>
 
 <!-- DETAILS -->
 <div class="modal" id="modal">
-  <div class="panel">
 
-    <div class="media">
-      <button class="arrow left" onclick="prev()">‹</button>
-      <button class="arrow right" onclick="next()">›</button>
+  <div class="media">
+    <button class="arrow left" onclick="prev()">‹</button>
+    <button class="arrow right" onclick="next()">›</button>
 
-      <div id="mediaBox" style="width:100%;height:100%;"></div>
-
-      <div class="dots" id="dots"></div>
-    </div>
-
-    <div class="info">
-      <div class="title" id="title"></div>
-      <div class="price" id="price"></div>
-
-      <div class="grid2" id="infoGrid"></div>
-
-      <div class="btns">
-        <button class="btn primary" onclick="window.open(INQUIRY_URL,'_blank')">Schedule</button>
-        <button class="btn dark" onclick="copyLink()">Share</button>
-        <button class="btn light" onclick="closeModal()">Close</button>
-      </div>
-    </div>
-
+    <div id="mediaBox"></div>
+    <div class="dots" id="dots"></div>
   </div>
+
+  <div class="info">
+    <div class="titleBig" id="title"></div>
+    <div class="priceBig" id="price"></div>
+
+    <div class="grid2" id="infoGrid"></div>
+
+    <div class="btns">
+      <button class="btn primary" onclick="window.open(INQUIRY_URL,'_blank')">Schedule</button>
+      <button class="btn dark" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
 const SHEET_ID = "1LGeq8OOEyDZUbEAKPsyOeMKIpBt2gRQGpFL22UZ3szI";
 const INQUIRY_URL = "https://www.cashbydaily.com/inquiry";
-
 const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?headers=1&tqx=out:json;responseHandler=loadData`;
 
 let data = [];
@@ -267,7 +262,15 @@ let filtered = [];
 let current = 0;
 let mediaIndex = 0;
 
-/* STOCK URL AUTO SEARCH */
+/* URL CONTROL */
+function setURL(stock){
+  if(stock){
+    history.replaceState(null, "", `?stock=${stock}`);
+  } else {
+    history.replaceState(null, "", `/inventory`);
+  }
+}
+
 function getStockFromURL(){
   return new URLSearchParams(window.location.search).get("stock") || "";
 }
@@ -290,16 +293,18 @@ function loadData(res){
     media:parseMedia(r.c[7]?.v||"")
   }));
 
+  const stock = getStockFromURL();
+  document.getElementById("search").value = stock;
+
   render();
 
-  const stock = getStockFromURL();
   if(stock){
-    document.getElementById("search").value = stock;
-    render();
+    const idx = data.findIndex(v => v.stock.toLowerCase() === stock.toLowerCase());
+    if(idx !== -1) openDetailsByData(idx);
   }
 }
 
-/* RENDER */
+/* RENDER LIST */
 function render(){
   const q = document.getElementById("search").value.toLowerCase();
 
@@ -314,7 +319,7 @@ function render(){
       <div class="content">
         <div class="title">${v.year} ${v.make} ${v.model}</div>
         <div class="price">$${v.price}</div>
-        <div class="meta">Stock: ${v.stock}</div>
+        <div class="meta">${v.stock}</div>
       </div>
     </div>
   `).join("");
@@ -322,15 +327,22 @@ function render(){
 
 /* DETAILS */
 function openDetails(i){
+  openDetailsByData(i);
+}
+
+function openDetailsByData(i){
   current = i;
   mediaIndex = 0;
 
   const v = filtered[i];
 
-  document.getElementById("modal").style.display="flex";
+  document.getElementById("modal").style.display = "block";
+
   document.getElementById("title").innerText =
     `${v.year} ${v.make} ${v.model}`;
-  document.getElementById("price").innerText = `$${v.price}`;
+
+  document.getElementById("price").innerText =
+    `$${v.price}`;
 
   document.getElementById("infoGrid").innerHTML = `
     <div>Stock<br>${v.stock}</div>
@@ -338,14 +350,16 @@ function openDetails(i){
     <div>Status<br>${v.status}</div>
   `;
 
+  setURL(v.stock);
   renderMedia();
 }
 
+/* MEDIA SLIDER */
 function renderMedia(){
   const v = filtered[current];
 
   document.getElementById("mediaBox").innerHTML =
-    `<img src="${v.media[mediaIndex]}" onerror="this.src='https://via.placeholder.com/800x400'">`;
+    `<img src="${v.media[mediaIndex]}" />`;
 
   document.getElementById("dots").innerHTML =
     v.media.map((_,i)=>`
@@ -354,21 +368,26 @@ function renderMedia(){
 }
 
 function setMedia(i){ mediaIndex=i; renderMedia(); }
-function next(){ const v=filtered[current]; mediaIndex=(mediaIndex+1)%v.media.length; renderMedia(); }
-function prev(){ const v=filtered[current]; mediaIndex=(mediaIndex-1+v.media.length)%v.media.length; renderMedia(); }
-
-function closeModal(){ document.getElementById("modal").style.display="none"; }
-
-function copyLink(){
+function next(){
   const v = filtered[current];
-  navigator.clipboard.writeText(`${location.origin}?stock=${v.stock}`);
+  mediaIndex = (mediaIndex+1) % v.media.length;
+  renderMedia();
+}
+function prev(){
+  const v = filtered[current];
+  mediaIndex = (mediaIndex-1+v.media.length) % v.media.length;
+  renderMedia();
 }
 
-function runSearch(){ render(); }
+/* CLOSE */
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+  setURL(null);
+}
 
 /* LOAD SHEET */
-const script=document.createElement("script");
-script.src=URL;
+const script = document.createElement("script");
+script.src = URL;
 document.body.appendChild(script);
 </script>
 
