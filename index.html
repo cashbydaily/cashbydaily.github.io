@@ -10,9 +10,8 @@
 
   body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: #fff;
-    color: #111;
   }
 
   header {
@@ -21,62 +20,53 @@
     border-bottom: 1px solid #eee;
   }
 
-  header h1 {
-    margin: 0;
-    font-size: 38px;
-  }
+  header h1 { margin: 0; font-size: 36px; }
 
   .controls {
     display: flex;
     gap: 10px;
+    padding: 16px;
     flex-wrap: wrap;
-    padding: 18px;
     max-width: 1200px;
     margin: auto;
   }
 
-  .controls input {
+  input {
     flex: 1;
-    min-width: 220px;
-    height: 44px;
+    min-width: 200px;
+    height: 42px;
     padding: 0 12px;
     border: 1px solid #ddd;
     border-radius: 10px;
   }
 
-  .search-btn {
-    height: 44px;
-    padding: 0 16px;
+  button {
+    height: 42px;
+    padding: 0 14px;
     border: none;
     border-radius: 10px;
     background: #111;
     color: #fff;
     font-weight: 700;
-    cursor: pointer;
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 14px;
-    padding: 18px;
+    padding: 16px;
     max-width: 1400px;
     margin: auto;
   }
 
   .card {
     border: 1px solid #eee;
-    border-radius: 14px;
+    border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
-    background: #fff;
   }
 
-  .card:hover {
-    box-shadow: 0 10px 25px rgba(0,0,0,.08);
-  }
-
-  .img {
+  .card img {
     width: 100%;
     height: 220px;
     object-fit: cover;
@@ -87,24 +77,11 @@
     padding: 12px;
   }
 
-  .title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
+  .title { font-weight: 700; font-size: 18px; }
+  .price { font-weight: 800; font-size: 20px; margin-top: 4px; }
+  .meta { font-size: 13px; color: #666; margin-top: 4px; }
 
-  .price {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-
-  .meta {
-    font-size: 13px;
-    color: #666;
-  }
-
-  /* FULL SCREEN DETAILS */
+  /* MODAL FULL SCREEN (stable) */
   .modal {
     display: none;
     position: fixed;
@@ -117,7 +94,6 @@
   .media {
     position: relative;
     background: #000;
-    width: 100%;
     height: 45vh;
     min-height: 320px;
   }
@@ -132,18 +108,17 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     border: none;
-    cursor: pointer;
-    font-size: 26px;
     background: rgba(255,255,255,.95);
-    z-index: 5;
+    font-size: 24px;
+    cursor: pointer;
   }
 
-  .arrow.left { left: 12px; }
-  .arrow.right { right: 12px; }
+  .left { left: 10px; }
+  .right { right: 10px; }
 
   .dots {
     position: absolute;
@@ -155,11 +130,11 @@
   }
 
   .dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
+    background: #666;
     border: none;
-    background: #555;
   }
 
   .dot.active { background: #fff; }
@@ -170,17 +145,8 @@
     margin: auto;
   }
 
-  .titleBig {
-    font-size: 24px;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-
-  .priceBig {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 12px;
-  }
+  .bigTitle { font-size: 22px; font-weight: 800; }
+  .bigPrice { font-size: 20px; font-weight: 800; margin: 6px 0 14px; }
 
   .grid2 {
     display: grid;
@@ -192,25 +158,19 @@
   .btns {
     display: flex;
     gap: 10px;
-    margin-top: 18px;
+    margin-top: 16px;
   }
 
   .btn {
     flex: 1;
-    padding: 14px;
+    padding: 12px;
     border-radius: 10px;
     border: none;
     font-weight: 700;
-    cursor: pointer;
   }
 
   .primary { background: #1877f2; color: #fff; }
   .dark { background: #111; color: #fff; }
-
-  @media(max-width:700px){
-    .grid2 { grid-template-columns: 1fr; }
-    header h1 { font-size: 30px; }
-  }
 </style>
 </head>
 
@@ -221,15 +181,14 @@
 </header>
 
 <div class="controls">
-  <input id="search" placeholder="Search inventory..." />
-  <button class="search-btn" onclick="render()">Search</button>
+  <input id="search" placeholder="Search stock / make / model..." />
+  <button onclick="render()">Search</button>
 </div>
 
 <div class="grid" id="grid"></div>
 
-<!-- DETAILS -->
+<!-- MODAL -->
 <div class="modal" id="modal">
-
   <div class="media">
     <button class="arrow left" onclick="prev()">‹</button>
     <button class="arrow right" onclick="next()">›</button>
@@ -239,48 +198,34 @@
   </div>
 
   <div class="info">
-    <div class="titleBig" id="title"></div>
-    <div class="priceBig" id="price"></div>
+    <div class="bigTitle" id="title"></div>
+    <div class="bigPrice" id="price"></div>
 
-    <div class="grid2" id="infoGrid"></div>
+    <div class="grid2" id="info"></div>
 
     <div class="btns">
-      <button class="btn primary" onclick="window.open(INQUIRY_URL,'_blank')">Schedule</button>
+      <button class="btn primary" onclick="window.open(INQUIRY,'_blank')">Schedule</button>
       <button class="btn dark" onclick="closeModal()">Close</button>
     </div>
   </div>
-
 </div>
 
 <script>
-const SHEET_ID = "1LGeq8OOEyDZUbEAKPsyOeMKIpBt2gRQGpFL22UZ3szI";
-const INQUIRY_URL = "https://www.cashbydaily.com/inquiry";
-const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?headers=1&tqx=out:json;responseHandler=loadData`;
+const SHEET = "1LGeq8OOEyDZUbEAKPsyOeMKIpBt2gRQGpFL22UZ3szI";
+const INQUIRY = "https://www.cashbydaily.com/inquiry";
+const URL = `https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?headers=1&tqx=out:json;responseHandler=loadData`;
 
 let data = [];
 let filtered = [];
 let current = 0;
 let mediaIndex = 0;
 
-/* URL CONTROL */
-function setURL(stock){
-  if(stock){
-    history.replaceState(null, "", `?stock=${stock}`);
-  } else {
-    history.replaceState(null, "", `/inventory`);
-  }
+/* SAFE PARSER */
+function parseMedia(str=""){
+  return str.split(";").map(x=>x.trim()).filter(Boolean);
 }
 
-function getStockFromURL(){
-  return new URLSearchParams(window.location.search).get("stock") || "";
-}
-
-/* MEDIA */
-function parseMedia(desc=""){
-  return desc.split(";").map(x=>x.trim()).filter(Boolean);
-}
-
-/* LOAD */
+/* GOOGLE CALLBACK (MUST BE GLOBAL) */
 function loadData(res){
   data = res.table.rows.map(r=>({
     year:r.c[0]?.v||"",
@@ -293,29 +238,27 @@ function loadData(res){
     media:parseMedia(r.c[7]?.v||"")
   }));
 
-  const stock = getStockFromURL();
-  document.getElementById("search").value = stock;
-
   render();
 
+  const stock = new URLSearchParams(location.search).get("stock");
   if(stock){
-    const idx = data.findIndex(v => v.stock.toLowerCase() === stock.toLowerCase());
-    if(idx !== -1) openDetailsByData(idx);
+    document.getElementById("search").value = stock;
+    render();
   }
 }
 
-/* RENDER LIST */
+/* RENDER GRID */
 function render(){
   const q = document.getElementById("search").value.toLowerCase();
 
   filtered = data.filter(v =>
-    (v.year+v.make+v.model+v.stock).toLowerCase().includes(q)
+    (v.stock+v.make+v.model+v.year).toLowerCase().includes(q)
   );
 
   document.getElementById("grid").innerHTML =
   filtered.map((v,i)=>`
     <div class="card" onclick="openDetails(${i})">
-      <img class="img" src="${v.media[0] || ''}" />
+      <img src="${v.media[0]||''}">
       <div class="content">
         <div class="title">${v.year} ${v.make} ${v.model}</div>
         <div class="price">$${v.price}</div>
@@ -325,18 +268,14 @@ function render(){
   `).join("");
 }
 
-/* DETAILS */
+/* OPEN */
 function openDetails(i){
-  openDetailsByData(i);
-}
-
-function openDetailsByData(i){
   current = i;
   mediaIndex = 0;
 
   const v = filtered[i];
 
-  document.getElementById("modal").style.display = "block";
+  document.getElementById("modal").style.display="block";
 
   document.getElementById("title").innerText =
     `${v.year} ${v.make} ${v.model}`;
@@ -344,51 +283,52 @@ function openDetailsByData(i){
   document.getElementById("price").innerText =
     `$${v.price}`;
 
-  document.getElementById("infoGrid").innerHTML = `
+  document.getElementById("info").innerHTML = `
     <div>Stock<br>${v.stock}</div>
     <div>Type<br>${v.type}</div>
     <div>Status<br>${v.status}</div>
   `;
 
-  setURL(v.stock);
+  history.replaceState(null,"",`?stock=${v.stock}`);
+
   renderMedia();
 }
 
-/* MEDIA SLIDER */
+/* MEDIA */
 function renderMedia(){
   const v = filtered[current];
 
   document.getElementById("mediaBox").innerHTML =
-    `<img src="${v.media[mediaIndex]}" />`;
+    `<img src="${v.media[mediaIndex]}">`;
 
   document.getElementById("dots").innerHTML =
     v.media.map((_,i)=>`
-      <button class="dot ${i===mediaIndex?'active':''}" onclick="setMedia(${i})"></button>
+      <button class="dot ${i===mediaIndex?'active':''}" onclick="mediaIndex=${i};renderMedia()"></button>
     `).join("");
 }
 
-function setMedia(i){ mediaIndex=i; renderMedia(); }
 function next(){
   const v = filtered[current];
-  mediaIndex = (mediaIndex+1) % v.media.length;
+  mediaIndex = (mediaIndex+1)%v.media.length;
   renderMedia();
 }
+
 function prev(){
   const v = filtered[current];
-  mediaIndex = (mediaIndex-1+v.media.length) % v.media.length;
+  mediaIndex = (mediaIndex-1+v.media.length)%v.media.length;
   renderMedia();
 }
 
 /* CLOSE */
 function closeModal(){
-  document.getElementById("modal").style.display = "none";
-  setURL(null);
+  document.getElementById("modal").style.display="none";
+  history.replaceState(null,"",location.pathname);
 }
 
 /* LOAD SHEET */
-const script = document.createElement("script");
-script.src = URL;
-document.body.appendChild(script);
+const s=document.createElement("script");
+s.src=URL;
+document.body.appendChild(s);
 </script>
 
 </body>
