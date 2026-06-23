@@ -115,6 +115,7 @@
     object-fit:cover;
     display:block;
     background:#f5f5f5;
+    cursor:pointer;
   }
 
   .thumbs{
@@ -209,6 +210,8 @@
     border-radius:10px;
     font-weight:700;
     font-size:14px;
+    border:none;
+    cursor:pointer;
   }
 
   .btn.primary{
@@ -241,11 +244,203 @@
     background:#fff6f6;
   }
 
+  .modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.82);
+    z-index:9999;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+  }
+
+  .modal-panel{
+    width:min(1100px, 100%);
+    max-height:92vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+    position:relative;
+  }
+
+  .modal-close{
+    position:absolute;
+    top:12px;
+    right:16px;
+    font-size:28px;
+    line-height:1;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:#fff;
+    z-index:2;
+  }
+
+  .gallery-close{
+    color:#fff;
+    position:fixed;
+    top:16px;
+    right:22px;
+    z-index:10001;
+    font-size:34px;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .gallery-wrap{
+    width:min(1200px, 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    color:#fff;
+  }
+
+  .gallery-main{
+    width:min(100%, 1100px);
+    max-height:72vh;
+    object-fit:contain;
+    background:#111;
+    border-radius:14px;
+  }
+
+  .gallery-controls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .gallery-btn{
+    border:none;
+    background:#fff;
+    color:#111;
+    font-weight:700;
+    border-radius:10px;
+    padding:10px 14px;
+    cursor:pointer;
+  }
+
+  .gallery-thumbs{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    max-width:1100px;
+  }
+
+  .gallery-thumb{
+    width:68px;
+    height:68px;
+    border:2px solid rgba(255,255,255,.22);
+    background:#222;
+    padding:0;
+    border-radius:10px;
+    overflow:hidden;
+    cursor:pointer;
+  }
+
+  .gallery-thumb.active{
+    border-color:#fff;
+  }
+
+  .gallery-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  .details-grid{
+    display:grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap:20px;
+    padding:22px;
+  }
+
+  .details-img{
+    width:100%;
+    height:420px;
+    object-fit:cover;
+    border-radius:14px;
+    background:#f5f5f5;
+    display:block;
+  }
+
+  .details-title{
+    font-size:30px;
+    font-weight:800;
+    margin:0 0 10px;
+  }
+
+  .details-price{
+    font-size:36px;
+    font-weight:800;
+    margin:0 0 12px;
+  }
+
+  .details-meta{
+    color:#555;
+    line-height:1.6;
+    margin-bottom:16px;
+    white-space:pre-line;
+  }
+
+  .details-thumb-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+
+  .details-thumb{
+    width:60px;
+    height:60px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    overflow:hidden;
+    padding:0;
+    cursor:pointer;
+    background:#fff;
+  }
+
+  .details-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  .details-actions{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+
+  .details-actions .btn{
+    flex:0 0 auto;
+    min-width:160px;
+  }
+
+  @media (max-width: 860px){
+    .details-grid{
+      grid-template-columns:1fr;
+    }
+
+    .details-img{
+      height:320px;
+    }
+  }
+
   @media (max-width: 640px){
     header h1{ font-size:34px; }
     .controls select{ flex:1 1 220px; }
     .main-image{ height:200px; }
     .price{ font-size:25px; }
+    .details-price{ font-size:30px; }
   }
 </style>
 </head>
@@ -281,9 +476,30 @@
 <div class="status-line" id="statusLine"></div>
 <div class="inventory" id="inventory"></div>
 
+<div class="modal" id="galleryModal" aria-hidden="true">
+  <div class="gallery-close" onclick="closeModal('galleryModal')">✕</div>
+  <div class="gallery-wrap">
+    <img id="galleryMainImg" class="gallery-main" src="" alt="Vehicle image" />
+    <div class="gallery-controls">
+      <button class="gallery-btn" onclick="prevGalleryImage()">Prev</button>
+      <button class="gallery-btn" onclick="nextGalleryImage()">Next</button>
+      <button class="gallery-btn" onclick="closeModal('galleryModal')">Close</button>
+    </div>
+    <div class="gallery-thumbs" id="galleryThumbs"></div>
+  </div>
+</div>
+
+<div class="modal" id="detailsModal" aria-hidden="true">
+  <div class="modal-panel">
+    <button class="modal-close" onclick="closeModal('detailsModal')">×</button>
+    <div id="detailsBody"></div>
+  </div>
+</div>
+
 <script>
   const SHEET_ID = "1LGeq8OOEyDZUbEAKPsyOeMKIpBt2gRQGpFL22UZ3szI";
   const GID = 0;
+  const SCHEDULE_URL = "https://www.cashbydaily.com/inquiry";
 
   const SHEET_URL =
     `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&headers=1&tqx=out:json;responseHandler:inventorySheetLoaded`;
@@ -301,6 +517,10 @@
     `);
 
   let vehicles = [];
+  let visibleVehicles = [];
+  let currentGalleryImages = [];
+  let currentGalleryIndex = 0;
+  let currentDetailsVehicle = null;
 
   const inventoryEl = document.getElementById("inventory");
   const metaEl = document.getElementById("meta");
@@ -308,6 +528,11 @@
   const searchEl = document.getElementById("search");
   const sortEl = document.getElementById("sort");
   const typeFilterEl = document.getElementById("typeFilter");
+  const galleryModal = document.getElementById("galleryModal");
+  const detailsModal = document.getElementById("detailsModal");
+  const galleryMainImg = document.getElementById("galleryMainImg");
+  const galleryThumbs = document.getElementById("galleryThumbs");
+  const detailsBody = document.getElementById("detailsBody");
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -316,6 +541,12 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#39;");
+  }
+
+  function escapeJs(value) {
+    return String(value ?? "")
+      .replaceAll("\\", "\\\\")
+      .replaceAll("'", "\\'");
   }
 
   function toNumber(value) {
@@ -343,11 +574,15 @@
 
   function isInStock(status) {
     const s = normalizeStatus(status);
-    return s === "instock" || s === "insock" || s === "instock";
+    return s === "instock" || s === "insock";
   }
 
   function isSold(status) {
     return normalizeStatus(status) === "sold";
+  }
+
+  function normalizeType(v) {
+    return String(v ?? "").toLowerCase().trim();
   }
 
   function vehicleSort(a, b, mode) {
@@ -381,7 +616,140 @@
     if (img && imageUrl) img.src = imageUrl;
   }
 
-  window.setCardImage = setCardImage;
+  function setGalleryImage(index) {
+    if (!currentGalleryImages.length) return;
+    currentGalleryIndex = ((index % currentGalleryImages.length) + currentGalleryImages.length) % currentGalleryImages.length;
+    galleryMainImg.src = currentGalleryImages[currentGalleryIndex];
+
+    const thumbs = [...galleryThumbs.querySelectorAll(".gallery-thumb")];
+    thumbs.forEach((btn, i) => btn.classList.toggle("active", i === currentGalleryIndex));
+  }
+
+  function nextGalleryImage() {
+    setGalleryImage(currentGalleryIndex + 1);
+  }
+
+  function prevGalleryImage() {
+    setGalleryImage(currentGalleryIndex - 1);
+  }
+
+  function openGallery(vehicleIndex, startIndex = 0) {
+    const vehicle = visibleVehicles[vehicleIndex];
+    if (!vehicle) return;
+
+    const images = vehicle.images.length ? vehicle.images : [PLACEHOLDER_IMAGE];
+    currentGalleryImages = images;
+    currentGalleryIndex = Math.max(0, Math.min(startIndex, images.length - 1));
+
+    galleryThumbs.innerHTML = images.map((img, i) => `
+      <button class="gallery-thumb ${i === currentGalleryIndex ? "active" : ""}" type="button" onclick="setGalleryImage(${i})">
+        <img src="${escapeHtml(img)}" alt="Thumb ${i + 1}">
+      </button>
+    `).join("");
+
+    setGalleryImage(currentGalleryIndex);
+    galleryModal.style.display = "flex";
+    galleryModal.setAttribute("aria-hidden", "false");
+  }
+
+  function openDetails(vehicleIndex) {
+    const vehicle = visibleVehicles[vehicleIndex];
+    if (!vehicle) return;
+
+    currentDetailsVehicle = vehicle;
+    const images = vehicle.images.length ? vehicle.images : [PLACEHOLDER_IMAGE];
+    const mainImage = images[0] || PLACEHOLDER_IMAGE;
+    const sold = isSold(vehicle.status);
+    const inStock = isInStock(vehicle.status);
+    const statusLabel = sold ? "SOLD" : (inStock ? "IN STOCK" : "IN STOCK");
+    const statusClass = sold ? "sold" : "in-stock";
+
+    const title = `${escapeHtml(vehicle.year)} ${escapeHtml(vehicle.make)} ${escapeHtml(vehicle.model)}`.trim();
+
+    detailsBody.innerHTML = `
+      <div class="details-grid">
+        <div>
+          <img
+            id="detailsMainImage"
+            class="details-img"
+            src="${escapeHtml(mainImage)}"
+            alt="${title}"
+            onerror="this.src='${PLACEHOLDER_IMAGE}'"
+            style="cursor:pointer"
+            onclick="openGallery(${vehicleIndex}, 0)"
+          >
+          <div class="details-thumb-row">
+            ${images.map((img, i) => `
+              <button class="details-thumb" type="button" onclick="openGallery(${vehicleIndex}, ${i})">
+                <img src="${escapeHtml(img)}" alt="Photo ${i + 1}">
+              </button>
+            `).join("")}
+          </div>
+        </div>
+
+        <div>
+          <div class="chips" style="margin-bottom:12px;">
+            <span class="chip status-chip ${statusClass}">${statusLabel}</span>
+            ${vehicle.type ? `<span class="chip">${escapeHtml(vehicle.type)}</span>` : ""}
+          </div>
+
+          <div class="details-title">${title}</div>
+          <div class="details-price">$${Number(toNumber(vehicle.price)).toLocaleString()}</div>
+
+          <div class="details-meta">
+Type: ${escapeHtml(vehicle.type)}
+Stock: ${escapeHtml(vehicle.stock)}
+Status: ${escapeHtml(vehicle.status)}
+          </div>
+
+          <div class="details-actions">
+            <a class="btn primary" href="${SCHEDULE_URL}" target="_blank" rel="noopener">Schedule</a>
+            <button class="btn secondary" type="button" onclick="openGallery(${vehicleIndex}, 0)">Details</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    detailsModal.style.display = "flex";
+    detailsModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.style.display = "none";
+      modal.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  function validateImageUrl(url, timeoutMs = 8000) {
+    return new Promise(resolve => {
+      if (!url) return resolve(null);
+
+      const img = new Image();
+      let settled = false;
+
+      const done = value => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve(value);
+      };
+
+      const timer = setTimeout(() => done(null), timeoutMs);
+
+      img.onload = () => done(url);
+      img.onerror = () => done(null);
+      img.referrerPolicy = "no-referrer";
+      img.src = url;
+    });
+  }
+
+  async function validateImages(urls) {
+    const unique = [...new Set(urls.filter(Boolean))];
+    const results = await Promise.all(unique.map(validateImageUrl));
+    return results.filter(Boolean);
+  }
 
   function render() {
     const query = searchEl.value.trim().toLowerCase();
@@ -397,13 +765,14 @@
         ].join(" ").toLowerCase();
 
         const matchSearch = query ? haystack.includes(query) : true;
-        const matchType = typeFilter ? v.type.toLowerCase() === typeFilter : true;
+        const matchType = typeFilter ? normalizeType(v.type) === typeFilter : true;
 
         return matchSearch && matchType;
       });
     }
 
     list.sort((a, b) => vehicleSort(a, b, sortMode));
+    visibleVehicles = list;
 
     metaEl.textContent = `${list.length} vehicle${list.length === 1 ? "" : "s"} found`;
 
@@ -417,21 +786,11 @@
       const cardId = `${index}-${String(v.stock).replace(/[^a-z0-9_-]/gi, "") || "car"}`;
       const mainImage = escapeHtml(images[0]);
       const title = `${escapeHtml(v.year)} ${escapeHtml(v.make)} ${escapeHtml(v.model)}`.trim();
-      const typeLine = escapeHtml(v.type);
-      const stockLine = escapeHtml(v.stock);
       const priceLine = Number(toNumber(v.price)).toLocaleString();
-
-      const statusNormalized = normalizeStatus(v.status);
       const sold = isSold(v.status);
       const inStock = isInStock(v.status);
       const statusClass = sold ? "sold" : "in-stock";
       const statusLabel = sold ? "SOLD" : (inStock ? "IN STOCK" : "IN STOCK");
-
-      const thumbs = images.slice(0, 6).map((img, i) => `
-        <button class="thumb" type="button" onclick="setCardImage('${cardId}', '${String(img).replaceAll("'", "\\'")}')">
-          <img src="${escapeHtml(img)}" alt="Photo ${i + 1}">
-        </button>
-      `).join("");
 
       return `
         <article class="card">
@@ -441,9 +800,18 @@
             src="${mainImage}"
             alt="${title}"
             onerror="this.src='${PLACEHOLDER_IMAGE}'"
+            onclick="openGallery(${index}, 0)"
           >
 
-          ${images.length > 1 ? `<div class="thumbs">${thumbs}</div>` : ""}
+          ${images.length > 1 ? `
+            <div class="thumbs">
+              ${images.slice(0, 6).map((img, i) => `
+                <button class="thumb" type="button" onclick="setCardImage('${cardId}', '${escapeJs(img)}')">
+                  <img src="${escapeHtml(img)}" alt="Photo ${i + 1}">
+                </button>
+              `).join("")}
+            </div>
+          ` : ""}
 
           <div class="info">
             <div class="chips">
@@ -455,13 +823,13 @@
             <div class="price">$${priceLine}</div>
 
             <div class="details">
-              ${typeLine ? `${typeLine}<br>` : ""}
-              ${stockLine ? `Stock: ${stockLine}` : ""}
+              ${escapeHtml(v.type)}<br>
+              Stock: ${escapeHtml(v.stock)}
             </div>
 
             <div class="buttons">
-              <a class="btn primary" href="https://www.cashbydaily.com/inquiry" target="_blank" rel="noopener">Schedule</a>
-              <a class="btn secondary" href="javascript:void(0)" onclick="navigator.clipboard.writeText('${stockLine.replaceAll("'", "\\'")}')">Copy Stock</a>
+              <a class="btn primary" href="${SCHEDULE_URL}" target="_blank" rel="noopener">Schedule</a>
+              <button class="btn secondary" type="button" onclick="openDetails(${index})">Details</button>
             </div>
           </div>
         </article>
@@ -495,7 +863,7 @@
     document.body.appendChild(script);
   }
 
-  window.inventorySheetLoaded = function(data) {
+  window.inventorySheetLoaded = async function(data) {
     try {
       const rows = data?.table?.rows || [];
 
@@ -511,12 +879,17 @@
       }));
 
       const total = vehicles.length;
-      const inStockCount = vehicles.filter(v => isInStock(v.status)).length;
-
-      statusEl.textContent = `Loaded ${total} rows. In-stock rows detected: ${inStockCount}.`;
+      const inStockBeforeValidation = vehicles.filter(v => isInStock(v.status)).length;
+      statusEl.textContent = `Loaded ${total} rows. In-stock rows detected: ${inStockBeforeValidation}. Validating images...`;
 
       vehicles = vehicles.filter(v => isInStock(v.status));
 
+      for (let i = 0; i < vehicles.length; i++) {
+        const cleaned = await validateImages(vehicles[i].images);
+        vehicles[i].images = cleaned.length ? cleaned : [];
+      }
+
+      statusEl.textContent = `Loaded ${total} rows. Valid in-stock vehicles: ${vehicles.length}.`;
       render();
     } catch (err) {
       console.error(err);
@@ -529,6 +902,31 @@
   searchEl.addEventListener("input", render);
   sortEl.addEventListener("change", render);
   typeFilterEl.addEventListener("change", render);
+
+  galleryModal.addEventListener("click", e => {
+    if (e.target === galleryModal) closeModal("galleryModal");
+  });
+
+  detailsModal.addEventListener("click", e => {
+    if (e.target === detailsModal) closeModal("detailsModal");
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      closeModal("galleryModal");
+      closeModal("detailsModal");
+    }
+    if (e.key === "ArrowRight" && galleryModal.style.display === "flex") nextGalleryImage();
+    if (e.key === "ArrowLeft" && galleryModal.style.display === "flex") prevGalleryImage();
+  });
+
+  window.openGallery = openGallery;
+  window.openDetails = openDetails;
+  window.closeModal = closeModal;
+  window.nextGalleryImage = nextGalleryImage;
+  window.prevGalleryImage = prevGalleryImage;
+  window.setGalleryImage = setGalleryImage;
+  window.setCardImage = setCardImage;
 
   loadSheetViaScript();
 </script>
