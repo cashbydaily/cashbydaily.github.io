@@ -1,1 +1,1 @@
-https://www.cashbydaily.com/home
+https://www.cashbydaily.com/
